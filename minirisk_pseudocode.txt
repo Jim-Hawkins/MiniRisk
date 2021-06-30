@@ -1,0 +1,71 @@
+clase Región(nombre, gobernante, num_tropas):
+    atts: str nombre, 
+          Jugador gobernante, 
+          int num_tropas, 
+          int color = gobernante.color
+          int fuerza = num_tropas * 2
+    métodos: 
+          int está_libre(self):
+              return gobernante == null                  
+    
+class Jugador(nombre, color, num_tropas, num_regiones):
+    atts: str nombre,
+          int color,
+          int puntuación,
+          int num_tropas
+          int num_regiones
+    métodos:
+          char atacar(Mapa map, str mi_region, str enemigo, int n_tropas):
+              if(self.num_tropas >= n_tropas):
+                  self.num_tropas -= n_tropas
+              else:
+                  return "No tienes tantas tropas"
+                  
+              if(map.adyacentes(mi_region, enemigo)):
+                  if( map.attack(mi_region, enemigo, n_tropas)) ):
+                      return "Ataque exitoso"
+                  else:
+                       return "Ataque rechazado"
+                  
+                  
+class Mapa:
+    atts: dict grafo = {"region1": "region2", "region3",
+                        "region2": "region1", "region2", "region3",
+                        "region3": "region1", "region2", "region3",
+                        "region4": "region2", "region3"}
+                        
+          dict regiones = ["region1": Región("region1", null, 0),
+                           "region2": Región("region2", null, 0),
+                           "region3": Región("region3", null, 0),
+                           "region4": Región("region4", null, 0)]
+                             
+    métodos:
+          int adyacentes(str region1, str region2):
+              return region2 in self.grafo[region1]
+              
+          int attack(str atacante, str defensor, int n_tropas):
+              Región atacante = self.regiones[atacante]              
+              Región defensor = self.regiones[defensor]
+              
+              if(n_tropas <= defensor.num_tropas):
+                  defensor.num_tropas -= n_tropas
+                  return 0
+              else:
+                  defensor.gobernante.puntuación -= 1
+                  defensor.gobernante.num_regiones -= 1
+                  atacante.gobernante.puntuación += 1
+                  atacante.gobernante.num_regiones += 1
+                  
+                  defensor.num_tropas = n_tropas - defensor.num_tropas
+                  defensor.color = atacante.gobernante.color
+                  defensor.gobernante = atacante.gobernante
+                  
+                  return 1
+                  
+                  
+              
+              
+Jugador players = [Jugador(pepe, rojo, 50, 1), Jugador(paco, verde, 50, 1), Jugador(rodrigo, azul, 50, 1)]
+Mapa map = Mapa(...)
+
+players[0].atacar("Renania", "Alsacia", 10)
